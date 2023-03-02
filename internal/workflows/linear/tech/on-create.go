@@ -40,6 +40,12 @@ func onCreate(ticket *linear.Ticket) (resp workflows.WebhookResponse) {
 	if err != nil {
 		return linear.HandleErrorResponse(err)
 	}
+
+	err = linearProvider.HandleColumnMappings(ticket)
+	if err != nil {
+		return linear.HandleErrorResponse(err)
+	}
+
 	resp.Success = true
 	return resp
 }

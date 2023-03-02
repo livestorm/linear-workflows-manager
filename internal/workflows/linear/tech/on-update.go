@@ -41,6 +41,12 @@ func handleStateChange(ticket *linear.Ticket) error {
 	if err != nil {
 		return err
 	}
+
+	// Check Parent Ticket
+	err = linearProvider.HandleColumnMappings(ticket)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
