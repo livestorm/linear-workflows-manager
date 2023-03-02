@@ -20,6 +20,21 @@ const getStatesQuery = `
 	}
 `
 
+const getIssueQuery = `
+	query getIssue($identifier: String = "ticketId") {
+		issue(id: $identifier) {
+			id
+			team {
+				key
+			}
+			state {
+				id
+				name
+			}
+		}
+	}
+`
+
 const changeStateMutation = `
 	mutation updateIssue($identifier: String = "SUP-2250", $stateId: String = "") {
 		issueUpdate(id: $identifier, input: {stateId: $stateId}) {

@@ -15,5 +15,19 @@ var techBoardConfig = BoardConfig{
 			"regression": {"bug-reason"},
 		},
 	},
+	ColumnMappings: map[string][]ColumnMapping{
+		// These mappings can be configured based on the team of the parent ticket (including the same team as the child).
+		// SUP is the key of the parent team in this case.
+		"SUP": {
+			{ChildColumn: "Backlog", ParentColumn: "Escalated"},
+			{ChildColumn: "In Progress", ParentColumn: "In Development"},
+			{ChildColumn: "Next release", ParentColumn: "Next Release"},
+			{
+				ChildColumn:  "Closed",
+				ParentColumn: "Closed",
+				Comment:      "Hello team, \n The fix of this issue has now been deployed to production.",
+			},
+		},
+	},
 	DefaultStateId: environment.Get("DEFAULT_TECH_STATE_ID"), // ID of the TODO State
 }

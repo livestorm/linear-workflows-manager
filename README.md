@@ -9,8 +9,7 @@ This repository implements Linear APIs and Webhooks in order to handle specific 
 ## Features
 
 - Mandatory Label management
-- Personalised Slack Notifications (In Development)
-- Automatic ticket column selection based on user's Slack Group (In Development)
+- Parent state changes (with comments) based on child state
 
 Have a feature request, feel free to create a Github Issue for this and we'll analyse if this could be included into our service.
  

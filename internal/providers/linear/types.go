@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	linearconfig "github.com/livestorm/linear-workflows-manager/core/config/linear"
+	"github.com/livestorm/linear-workflows-manager/internal/workflows/linear"
 )
 
 type LinearProvider struct {
@@ -25,6 +26,15 @@ type LinearState struct {
 type getUserResponse struct {
 	Data struct {
 		User linearUser `json:"user"`
+	} `json:"data"`
+	Errors []struct {
+		Message string `json:"message"`
+	} `json:"errors"`
+}
+
+type getIssueResponse struct {
+	Data struct {
+		Issue *linear.TicketData `json:"issue"`
 	} `json:"data"`
 	Errors []struct {
 		Message string `json:"message"`

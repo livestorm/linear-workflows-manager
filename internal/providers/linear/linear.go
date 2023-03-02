@@ -13,6 +13,7 @@ import (
 
 	linearconfig "github.com/livestorm/linear-workflows-manager/core/config/linear"
 	"github.com/livestorm/linear-workflows-manager/core/environment"
+	"github.com/livestorm/linear-workflows-manager/internal/workflows/linear"
 )
 
 func New() *LinearProvider {
@@ -92,6 +93,67 @@ func (l *LinearProvider) GetUserById(id string) (user *linearUser, err error) {
 
 	user = &response.Data.User
 	return user, nil
+}
+
+func (l *LinearProvider) GetIssueById(id string) (issue *linear.TicketData, err error) {
+	// Build payload
+	payload := &linearRequest{}
+	payload.Query = getIssueQuery
+
+	payload.Variables = struct {
+		Identifier string `json:"identifier"`
+	}{
+		Identifier: id,
+	}
+
+	// Create request and add headers
+	req, err := l.buildRequest(payload)
+	if err != nil {
+		fmt.Printf("Failed to create HTTP request: %s \n", err.Error())
+		return nil, err
+	}
+
+	// Perform the request
+	resp, err := l.client.Do(req)
+	if err != nil {
+		fmt.Printf("Failed to run HTTP request: %s \n", err.Error())
+		return nil, err
+	}
+
+	// Parse the response received
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("Could not read body: %s \n", err.Error())
+		return nil, err
+	}
+
+	response := &getIssueResponse{}
+	if err := json.Unmarshal(body, response); err != nil {
+		fmt.Printf("Failed to parse response body: %s \n", err.Error())
+		return nil, err
+	}
+
+	// Check if successful and return response
+	if len(response.Errors) > 0 {
+		fmt.Printf("Linear Query failed: %s \n", response.Errors[0].Message)
+		return nil, errors.New(response.Errors[0].Message)
+	}
+
+	issue = response.Data.Issue
+	return issue, nil
+}
+
+func (l *LinearProvider) GetStateByName(team string, name string) (state linearconfig.BoardState) {
+	boardConfig := linearconfig.GetBoardConfig(team)
+
+	for _, linearState := range boardConfig.BoardStates {
+		if linearState.Name == name {
+			return linearState
+		}
+	}
+
+	return linearconfig.BoardState{}
 }
 
 func (l *LinearProvider) GetStatesByTeam(name string) (states *[]linearconfig.BoardState, err error) {
